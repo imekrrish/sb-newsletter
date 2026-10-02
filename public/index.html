@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SOLARbytes Newsletter Generator</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">SB</span>
+    <div>
+      <h1>Newsletter Generator</h1>
+      <p>Turn the SOLARbytes feed into the Daily Digest email</p>
+    </div>
+  </div>
+  <span id="status" class="status">Ready</span>
+</header>
+
+<main class="layout">
+  <!-- ============ LEFT: FORM ============ -->
+  <form id="form" class="panel form-panel" autocomplete="off">
+
+    <!-- 1. Feed -->
+    <section class="step">
+      <div class="step-head"><span class="num">1</span><div><h2>Feed source</h2><p>Where the stories and images come from</p></div></div>
+
+      <div class="seg" role="tablist">
+        <button type="button" class="seg-btn active" data-src="url" role="tab">RSS URL</button>
+        <button type="button" class="seg-btn" data-src="file" role="tab">Upload file</button>
+      </div>
+
+      <div class="src src-url">
+        <label class="lbl" for="rssUrl">RSS URL</label>
+        <div class="input-wrap">
+          <svg viewBox="0 0 24 24" class="in-ico"><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
+          <input id="rssUrl" type="url" data-save>
+        </div>
+      </div>
+
+      <div class="src src-file" hidden>
+        <label class="drop" id="drop" for="rssFile">
+          <input id="rssFile" type="file" accept=".rss,.xml,application/rss+xml,text/xml">
+          <svg viewBox="0 0 24 24" class="drop-ico"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>
+          <span class="drop-main" id="dropText">Drop the <b>.rss</b> file here or <u>browse</u></span>
+          <span class="drop-sub">Saved copy of solarbytes.info/rss</span>
+        </label>
+      </div>
+
+      <button type="button" class="btn btn-dark full" id="loadBtn">
+        <span class="spinner" aria-hidden="true"></span>
+        <span class="btn-label">Load stories</span>
+      </button>
+    </section>
+
+    <!-- 2. Edition -->
+    <section class="step">
+      <div class="step-head"><span class="num">2</span><div><h2>Edition details</h2><p>Header date, issue number and the one-line teaser</p></div></div>
+
+      <div class="row">
+        <div>
+          <label class="lbl" for="nlDate">Newsletter date</label>
+          <div class="input-wrap"><input id="nlDate" type="date"></div>
+        </div>
+        <div>
+          <label class="lbl" for="issue">Issue #</label>
+          <div class="input-wrap"><span class="prefix">#</span><input id="issue" type="text" inputmode="numeric" placeholder="142" data-save></div>
+        </div>
+      </div>
+
+      <label class="lbl" for="today">Summary <span class="muted">· shown after the “Today:” label</span></label>
+      <textarea id="today" rows="3" class="ta" data-save placeholder="NTPC REL invites 1 GW EPC bids in Andhra Pradesh, LONGi hits 28.29% cell efficiency, and Ørsted starts 200 MW US construction."></textarea>
+      <div class="counter"><span id="todayCount">0</span> characters · also used as the inbox preview text</div>
+    </section>
+
+    <!-- 3. Lead byte -->
+    <section class="step">
+      <div class="step-head"><span class="num">3</span><div><h2>The Lead Byte</h2><p>Hero story with a large image and key figures</p></div></div>
+
+      <label class="switch">
+        <input type="checkbox" id="leadOn" checked data-save>
+        <span class="track"></span>
+        <span>Include <b>THE LEAD BYTE</b></span>
+      </label>
+
+      <div class="when" data-when="leadOn">
+        <label class="lbl" for="leadStory">Lead story</label>
+        <div class="input-wrap select-wrap"><select id="leadStory"><option value="">Load stories first</option></select></div>
+
+        <label class="lbl" for="bullets">Bullet points <span class="muted">· one per line, “Label: text” makes the label bold</span></label>
+        <textarea id="bullets" rows="4" class="ta mono" data-save placeholder="Total Capacity: 1,000 MW (AC) / 2 × 500 MW units&#10;Location: Kambadur, Anantapur, Andhra Pradesh&#10;Mandate: Turnkey EPC + 3-year O&amp;M from COD"></textarea>
+      </div>
+    </section>
+
+    <!-- 4. Sponsored -->
+    <section class="step">
+      <div class="step-head"><span class="num">4</span><div><h2>Sponsored content</h2><p>Partner block shown under the lead story</p></div></div>
+
+      <label class="switch">
+        <input type="checkbox" id="spOn" data-save>
+        <span class="track"></span>
+        <span>Include <b>Sponsored content</b></span>
+      </label>
+
+      <div class="when" data-when="spOn">
+        <label class="lbl" for="spTitle">Headline</label>
+        <input id="spTitle" class="ta" data-save placeholder="Tier-1 TOPCon Glass-Glass Modules for C&amp;I Rooftops">
+        <label class="lbl" for="spText">Text</label>
+        <textarea id="spText" rows="3" class="ta" data-save placeholder="High bifaciality with lower degradation curves…"></textarea>
+        <div class="row">
+          <div>
+            <label class="lbl" for="spUrl">Link</label>
+            <input id="spUrl" type="url" class="ta" data-save placeholder="https://">
+          </div>
+          <div>
+            <label class="lbl" for="spCta">Button text</label>
+            <input id="spCta" class="ta" data-save placeholder="Learn more">
+          </div>
+        </div>
+        <label class="lbl" for="spImage">Image URL <span class="muted">· optional</span></label>
+        <div class="img-field">
+          <img class="img-prev" id="spImagePrev" alt="" hidden>
+          <input id="spImage" type="url" class="ta" data-save placeholder="https://…/sponsor.jpg">
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Metric -->
+    <section class="step">
+      <div class="step-head"><span class="num">5</span><div><h2>Metric of the day</h2><p>The big number near the end of the email</p></div></div>
+
+      <label class="switch">
+        <input type="checkbox" id="mOn" checked data-save>
+        <span class="track"></span>
+        <span>Include <b>Metric of the day</b></span>
+      </label>
+
+      <div class="when" data-when="mOn">
+        <div class="row">
+          <div>
+            <label class="lbl" for="mValue">Metric</label>
+            <input id="mValue" class="ta big" data-save placeholder="28.29%">
+          </div>
+          <div>
+            <label class="lbl" for="mCta">Button text</label>
+            <input id="mCta" class="ta" data-save placeholder="Go to story">
+          </div>
+        </div>
+        <label class="lbl" for="mText">Text</label>
+        <textarea id="mText" rows="2" class="ta" data-save placeholder="Certified cell efficiency logged by LONGi on HIBC cells at ISFH…"></textarea>
+        <label class="lbl" for="mLink">Link to go to story</label>
+        <div class="input-wrap select-wrap"><select id="mLink"><option value="">No link</option></select></div>
+        <input id="mUrl" type="url" class="ta mt" data-save placeholder="https://solarbytes.info/…" hidden>
+      </div>
+    </section>
+
+    <!-- 6. Stories -->
+    <section class="step step-stories">
+      <div class="step-head"><span class="num">6</span><div><h2>Stories</h2><p>Tick stories to include. Edit any title, summary, tag, section or image.</p></div></div>
+
+      <div class="story-tools">
+        <span class="muted" id="selCount">No feed loaded</span>
+        <div class="quick">
+          <button type="button" data-quick="picks" title="Stories tagged NL in the feed">NL picks</button>
+          <button type="button" data-quick="day" title="Published in the 24 h before the newest story">Last 24 h</button>
+          <button type="button" data-quick="all">All</button>
+          <button type="button" data-quick="none">None</button>
+        </div>
+      </div>
+      <div class="filter input-wrap" hidden id="filterWrap">
+        <svg viewBox="0 0 24 24" class="in-ico"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="filter" type="search" placeholder="Filter by title, section or tag">
+      </div>
+      <ul id="stories" class="stories">
+        <li class="stories-empty">Load the feed to pick stories.</li>
+      </ul>
+    </section>
+
+    <div class="actions">
+      <button type="button" class="btn btn-ghost" id="resetBtn">Reset</button>
+      <button type="submit" class="btn btn-primary" id="submitBtn">Refresh preview</button>
+    </div>
+  </form>
+
+  <!-- ============ RIGHT: PREVIEW ============ -->
+  <section class="panel preview-panel">
+    <div class="pv-bar">
+      <div class="pv-title">
+        <h2>Preview</h2>
+        <div id="stats" class="chips"></div>
+      </div>
+      <div class="pv-tools">
+        <div class="seg small">
+          <button type="button" class="seg-btn active" data-view="desktop" title="Desktop width">Desktop</button>
+          <button type="button" class="seg-btn" data-view="mobile" title="Mobile width">Mobile</button>
+        </div>
+        <button type="button" class="btn btn-ghost sm" id="copyBtn" disabled>Copy HTML</button>
+        <button type="button" class="btn btn-ghost sm" id="openBtn" disabled>Open</button>
+        <button type="button" class="btn btn-primary sm" id="downloadBtn" disabled>Download</button>
+      </div>
+    </div>
+
+    <div class="pv-stage">
+      <div class="empty" id="empty">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 8h18M7 12h6M7 16h10"/></svg>
+        <h3>No newsletter yet</h3>
+        <p>Hit <b>Load stories</b> on the left. The email appears here and updates as you type.</p>
+      </div>
+      <iframe id="preview" title="Newsletter preview" hidden></iframe>
+    </div>
+  </section>
+</main>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="settings.js"></script>
+<script src="template.js"></script>
+<script src="converter.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

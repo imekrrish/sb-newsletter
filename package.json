@@ -1,0 +1,13 @@
+{
+  "name": "sb-newsletter",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Generate the SOLARbytes Daily Digest email HTML from the solarbytes.info RSS feed",
+  "scripts": {
+    "start": "node server.js",
+    "build": "node cli.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

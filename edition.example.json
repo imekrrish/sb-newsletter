@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-02",
+  "issue": "142",
+  "today": "NTPC REL invites 1 GW EPC bids in Andhra Pradesh, Waaree Power adds a 1.1 GW inverter line, and US developers push new utility-scale projects.",
+  "lead": {
+    "enabled": true,
+    "link": "https://solarbytes.info/india-bytes/ntpc-rel-invites-bids-1-gw-solar-epc-kambadur-anantapur-andhra-pradesh-12612362",
+    "bullets": [
+      "Total Capacity: 1,000 MW (AC), configured as 2 × 500 MW units",
+      "Location: Kambadur, Anantapur district, Andhra Pradesh",
+      "Mandate: Turnkey EPC + 3-year comprehensive O&M from COD"
+    ]
+  },
+  "sponsored": {
+    "enabled": true,
+    "title": "Tier-1 TOPCon Glass-Glass Modules for C&I Rooftops",
+    "text": "High bifaciality with lower degradation curves. Explore commercial availability, regional stocking in EMEA, and multi-container pricing directly from certified distribution hubs.",
+    "url": "https://solarbytes.info",
+    "cta": "Check Container Availability",
+    "image": ""
+  },
+  "metric": {
+    "enabled": true,
+    "value": "1.1 GW",
+    "text": "New annual solar inverter capacity Waaree Power switched on at Sarodhi, Gujarat, lifting its total to 4.15 GW.",
+    "url": "https://solarbytes.info/india-bytes/waaree-power-starts-1-10-gw-solar-inverter-line-sarodhi-gujarat-12613718",
+    "cta": "Go to story"
+  },
+  "stories": []
+}
