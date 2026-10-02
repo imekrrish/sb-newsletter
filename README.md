@@ -1,97 +1,72 @@
-# SOLARbytes Newsletter Generator
+# Newsletter Studio — SOLARbytes & BESSNEWS
 
-Builds the **SOLARbytes Daily Digest** email from the solarbytes.info RSS feed. It works the same way as the TaiyangNews generator (`tn-newsletter`): a form on the left and a live email preview on the right, with Download, Copy and Open buttons.
-
-The email layout is a refined version of `nl_sb_9.html`.
+An extension of `imekrrish/sb-newsletter`, using its existing zero-dependency editor and converter patterns, with a separate BESSNEWS tab. BESSNEWS follows `references/BN_NL_9.html` and the supplied three-tier editorial requirements. TaiyangNews remains in its separate repository and is not included in this app.
 
 ## Run
 
-```
-npm start            # http://localhost:4400  (Node 18+, no npm install needed)
-```
+Node 22:
 
-The page loads `https://solarbytes.info/rss` on open. Stories tagged **NL** in the feed are pre-selected.
-
-## Form
-
-| Step | Field | Email output |
-|---|---|---|
-| 1 | RSS URL or uploaded `.rss` file | Story source |
-| 2 | Newsletter date, Issue # | Header date and issue badge |
-| 2 | Summary | "Today:" bar and the inbox preview text |
-| 3 | Include THE LEAD BYTE checkbox, lead story, bullet points | Hero image, title, summary and a key-figures box |
-| 4 | Sponsored content checkbox, headline, text, link, button, image | Partner block under the lead |
-| 5 | Metric of the day checkbox, metric, text, link to story | Navy metric band with a "Go to story" button |
-| 6 | Story list | Section blocks with a thumbnail, tag, title and summary |
-
-Bullet points take one line each. Write `Label: text` to make the label bold.
-
-Each story has an **Edit** button for its title, summary, tag, section and image URL. Edited stories show an "Edited" badge and can be reverted to the feed version.
-
-The draft saves in the browser as you type. Reopening the page restores it for the same or a future date. When a new edition starts, the daily copy is cleared and the issue number moves one past the last downloaded issue.
-
-Download names follow `SB_2Oct2026.html`.
-
-## Images
-
-Every story uses its feed image. Publive CDN images are requested at exact crop sizes, so they look right in Gmail and Outlook, which ignore CSS cropping.
-
-| Use | Display size | Requested size |
-|---|---|---|
-| Lead hero | 600 × 260 | 1200 × 520 |
-| Story thumbnail | 90 × 72 | 180 × 144 |
-
-Images from other hosts are used as-is. Stories without an image fall back to `images.fallback` in the settings file. Use public image URLs, because email clients block local files and data URIs.
-
-## Special characters
-
-Every non-ASCII character in the email, such as ’ – × €, is written as an HTML code like `&#8217;`. The email then shows them correctly even if the sending tool assumes the wrong character set.
-
-Emoji in feed text are removed, because email clients can't show them reliably. That includes emoji the feed already lost upstream as "?", such as `Conference - Online ?️`. When one is removed, the spaced " - " separator in that text goes too, so the title becomes `Conference Online`.
-
-## Configuration
-
-Everything that stays the same between editions lives in `public/settings.js`:
-
-- **Brand:** logo text, title, publisher and sister sites.
-- **Colors:** the navy and amber palette.
-- **Sections:** the order of sections and which feed categories go into each one.
-- **Labels:** "Today:", "The Lead Byte", button text and similar.
-- **Footer:** feedback links, WhatsApp and Telegram links, and the Zoho unsubscribe and preferences merge tags.
-- **Image sizes and the fallback image.**
-
-A story goes into the first section whose `match` list contains one of its feed categories. Its tag is its first non-region category, so "India Bytes / Bid Bytes" shows as **Bid Bytes** under India Bytes.
-
-## Command line
-
-```
-node cli.js https://solarbytes.info/rss out.html --edition edition.example.json
-node cli.js feed.rss --date 2026-10-02 --issue 143 --today "One-line summary"
+```sh
+npm start
+# http://localhost:4400
+npm test
 ```
 
-Without `--edition`, the CLI uses the NL-tagged stories and makes the first one the lead. `edition.example.json` shows every option. Its `stories` list takes story links, or objects with a `link` plus any fields to override.
+No dependency install is required. Use the publication tabs:
 
-`sample-output.html` was built from the live feed on 2 Oct 2026 with `edition.example.json`.
+| URL | Newsletter |
+| --- | --- |
+| `/` or `/?mode=sb` | SOLARbytes Daily Digest |
+| `/?mode=bess` | BESSNEWS Executive Briefing |
 
-## Deploying to Vercel
+## BESS workflow
 
-Import the repo in Vercel and keep the defaults. `vercel.json` already sets everything:
+1. Load `https://bessnews.com/rss`, or upload an RSS/XML file.
+2. Select stories; NL-tagged stories are selected by default. If the feed has no NL picks, the latest 24 hours are selected.
+3. Write the Today summary and set the edition date and issue number.
+4. Choose the hero, review its two paragraphs, and add in-depth bullet highlights. Article paragraphs/takeaways are extracted from RSS content when available. Missing editorial text is flagged rather than invented.
+5. Choose two distinct secondary features, each with one paragraph and exactly two quick bullets. Defaults use the next two selected stories.
+6. Remaining stories become compact text-only Quick Signals, grouped by category. Edit any story's title, summary, tag, section, or image.
+7. Configure optional top, middle, and footer banner advertisements and the native partner spotlight. All placements are labelled. Ads require an HTTPS/HTTP image and destination; disabled or incomplete banners are omitted from export.
+8. Inspect desktop and mobile previews, then Download or Copy HTML for the email platform.
 
-- **Build:** `npm run build` only prints a message, because there is nothing to compile.
-- **Output:** the `public` folder is served as the site.
-- **Feed proxy:** `api/rss.js` runs as a serverless function at `/api/rss`. It only passes through RSS or XML responses.
+Hero and secondary stories are removed from the signal list to avoid duplication. Each secondary slot can contain only one distinct story. BESSNEWS and SOLARbytes have independent saved drafts, selections, overrides and last-exported issue numbers. Parsed feed content is saved with the draft so file-upload editions can be recovered. Drafts are local to the browser; there is no account or cross-device synchronization.
 
-The command-line builder is `npm run newsletter -- <feed> [out.html] …`, not `npm run build`.
+The UI flags missing hero paragraphs/highlights, secondary feature copy, and incomplete ads. It permits draft exports so editors can work on partial editions. Review those flags before sending. No email is sent by this app.
 
-## Files
+## Categories and tags
 
+Edit `public/bess-settings.js`. Parent topic categories take precedence over child tag pills. The inferred parent groups are Projects & Deployments; Markets & Tenders; Policy, Grid & Regulation; Technology & Manufacturing; Finance & Business; Regional & Global Signals. The screenshot's cropped right edge prevents recovery of every tag; visible tags and the HTML's categories are included, and unknown stories fall back to Regional & Global Signals. All non-NL tags remain editable, so the complete taxonomy can be applied without code changes to individual stories.
+
+## SOLARbytes
+
+SOLARbytes keeps its existing lead/story/metric layout and gains the same three banner slots. Existing SOLARbytes draft keys are retained.
+
+## CLI
+
+```sh
+node cli.js tests/sample.rss sample-bess-output.html --mode bess --edition edition.bess.example.json
+node cli.js feed.rss out.html --mode bess --date 2026-10-03 --issue 9 --today "Today's summary"
+node cli.js feed.rss out.html --mode sb
 ```
-server.js            local static server (uses api/rss.js for the feed proxy)
-api/rss.js           RSS proxy, also the Vercel serverless function
-vercel.json          Vercel settings: serve public/, run api/rss.js
-cli.js               command-line build
-public/settings.js   brand, sections, labels, footer, image sizes
-public/converter.js  RSS parsing, section and tag classification, image sizing
-public/template.js   email HTML (table layout, inline styles, Outlook fixes)
-public/app.js        generator UI
-```
+
+The CLI defaults to SOLARbytes; `--mode bess` creates a hero and the next two features. `edition.bess.example.json` illustrates explicit feature overrides, hero paragraphs, sponsored copy and ads. Arrays of bullet strings are supported. Sample files contain clearly marked illustrative copy, not verified current news. Replace every sample sponsor image, link and fact before publication.
+
+## Vercel
+
+Import this repository; Framework: Other, build command: `npm run build`, output: `public`. `vercel.json` includes the `/api/rss` serverless function. No secrets or environment variables are required. A Vercel deployment is a separate operation; this project is not deployed automatically by the build.
+
+The proxy allows HTTPS RSS URLs only on bessnews.com and solarbytes.info (including www). Every redirect is checked, responses are capped at 5 MiB and requests time out after 20 seconds. Other feeds can be uploaded as files. Availability of the live upstream feeds depends on the publishers and hosting network.
+
+## Email output
+
+620px BESS table layout, inline styling, mobile rules, Outlook table fallback, hidden preheader, safe URL handling, escaped editorial text, ASCII-safe Unicode entities, and preserved Zoho unsubscribe/preferences merge tags. Validate the HTML in your actual email delivery platform; Outlook and Gmail rendering were not tested in real inboxes.
+
+## Source provenance
+
+- SB: `imekrrish/sb-newsletter`, main tree `fe9356414f5bd77e9bda14454ff4f8f5a383ea33`.
+- BESS: supplied `BN_NL_9.html`, retained in `references/`.
+
+## Verification
+
+`npm test` checks feed content extraction and topic precedence; tier rendering and story deduplication; ads in SB and BESS; safe HTML/URLs/Unicode and merge tags; and proxy destination restrictions. Browser verification should also exercise drafts, downloads, tab switching, story editing and mobile preview before publishing.

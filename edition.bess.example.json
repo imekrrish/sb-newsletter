@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-03",
+  "issue": "9",
+  "today": "SAMPLE EDITION: replace all editorial content and sponsor assets before sending.",
+  "lead": {
+    "link": "https://bessnews.com/sample-1"
+  },
+  "features": [
+    {
+      "link": "https://bessnews.com/sample-2"
+    },
+    {
+      "link": "https://bessnews.com/sample-3"
+    }
+  ],
+  "ads": {
+    "top": {
+      "enabled": true,
+      "url": "https://bessnews.com",
+      "image": "https://placehold.co/600x90/0a192f/10b981?text=Sample+Sponsor",
+      "label": "Sample leaderboard sponsor"
+    },
+    "middle": {
+      "enabled": true,
+      "url": "https://bessnews.com",
+      "image": "https://placehold.co/600x120/0a192f/10b981?text=Sample+Sponsor",
+      "label": "Sample industry partner"
+    },
+    "bottom": {
+      "enabled": true,
+      "url": "https://bessnews.com",
+      "image": "https://placehold.co/600x100/0a192f/10b981?text=Sample+Sponsor",
+      "label": "Sample event partner"
+    }
+  },
+  "sponsored": {
+    "enabled": true,
+    "title": "Sample partner spotlight",
+    "text": "Replace with approved sponsor copy.",
+    "url": "https://bessnews.com",
+    "cta": "Learn more"
+  },
+  "metric": {
+    "enabled": true,
+    "value": "Sample benchmark",
+    "text": "Add a verified figure and its source.",
+    "url": "https://bessnews.com"
+  }
+}

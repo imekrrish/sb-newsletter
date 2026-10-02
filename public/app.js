@@ -6,8 +6,8 @@
   const esc = window.SBTemplate.esc;
   const $ = (id) => document.getElementById(id);
 
-  const DRAFT_KEY = 'sb-newsletter-draft-v1';
-  const SENT_KEY = 'sb-newsletter-last-sent-v1';
+  const DRAFT_KEY = S.mode === 'sb' ? 'sb-newsletter-draft-v1' : 'bess-newsletter-draft-v2';
+  const SENT_KEY = S.mode === 'sb' ? 'sb-newsletter-last-sent-v1' : 'bess-newsletter-last-sent-v2';
   const store = {
     get(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (_) { return null; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) { /* storage blocked */ } },
@@ -24,6 +24,7 @@
   let items = [];               // parsed feed items, feed order
   let selected = new Set();     // ids of included stories
   let overrides = {};           // id -> { title, summary, tag, section, image }
+  let featureIds = ['', ''];
   let leadId = '';
   let metricLink = '';          // story id, '__custom' or ''
   let pending = null;           // selection restored from a saved draft, applied after feed load
@@ -67,7 +68,7 @@
   function draft() {
     const fields = {};
     saveables().forEach((el) => (fields[el.id] = el.type === 'checkbox' ? el.checked : el.value));
-    return { date: $('nlDate').value, fields, selected: [...selected], overrides, leadId, metricLink };
+    return { date: $('nlDate').value, fields, selected: [...selected], overrides, leadId, metricLink, featureIds, items };
   }
 
   let saveTimer;
@@ -77,7 +78,7 @@
   }
 
   // Copy that changes every day. Cleared when a new edition starts.
-  const DAILY = ['today', 'bullets', 'mValue', 'mText', 'mUrl'];
+  const DAILY = ['today', 'bullets', 'mValue', 'mText', 'mUrl', 'heroP1','heroP2','f1Paragraph','f2Paragraph','f1Bullets','f2Bullets'];
 
   function restore() {
     $('rssUrl').value = S.feedUrl;
@@ -95,6 +96,10 @@
     if (current) {
       pending = { selected: d.selected || [], leadId: d.leadId || '', metricLink: d.metricLink || '' };
       overrides = d.overrides || {};
+      featureIds = d.featureIds || ['', ''];
+      items = d.items || [];
+      selected = new Set((d.selected || []).filter(id => items.some(i => i.id === id)));
+      leadId = d.leadId || '';
     } else {
       // New edition: suggest the next issue number after the last download.
       const sent = store.get(SENT_KEY);
@@ -172,7 +177,7 @@
 
       // Keep a saved selection for this edition when its stories are still in the feed.
       const saved = pending && pending.selected.filter((id) => ids.has(id));
-      if (saved && saved.length) {
+      if (pending && Array.isArray(pending.selected)) {
         selected = new Set(saved);
         leadId = ids.has(pending.leadId) ? pending.leadId : '';
         metricLink = pending.metricLink === '__custom' || ids.has(pending.metricLink) ? pending.metricLink : '';
@@ -181,6 +186,12 @@
         leadId = '';
       }
       pending = null;
+      if(S.mode==='bess') {
+        if(!$('heroP1').value && !$('heroP2').value) fillStoryCopy(effectiveLeadId(),'hero');
+        const candidates = selectedStories().filter(s=>s.id!==effectiveLeadId());
+        [0,1].forEach(i=>{if(!featureIds[i] && candidates[i]){featureIds[i]=candidates[i].id;fillStoryCopy(featureIds[i],'f'+(i+1));}});
+      }
+      save();
       $('filterWrap').hidden = false;
       renderStories();
       build();
@@ -225,7 +236,7 @@
       <div class="st-editor">
         <label class="lbl">Title</label>
         <input class="ta" data-field="title" value="${esc(s.title)}">
-        <label class="lbl">Summary <span class="muted">· trimmed to about two sentences in the email, four for the lead</span></label>
+        <label class="lbl">Summary <span class="muted">${S.mode === 'bess' ? '· two-line Quick Signal' : '· trimmed for the email'}</span></label>
         <textarea class="ta" rows="3" data-field="summary">${esc(s.summary)}</textarea>
         <div class="row">
           <div><label class="lbl">Tag</label><input class="ta" data-field="tag" value="${esc(s.tag)}"></div>
@@ -277,6 +288,7 @@
       : `<li class="stories-empty">${items.length ? 'No stories match the filter.' : 'Load the feed to pick stories.'}</li>`;
     $('selCount').textContent = items.length ? `${selected.size} of ${items.length} selected` : 'No feed loaded';
     renderLeadOptions();
+    renderFeatureOptions();
     renderMetricOptions();
   }
 
@@ -303,6 +315,33 @@
       : `<option value="">${items.length ? 'Select stories below first' : 'Load stories first'}</option>`;
   }
 
+  
+  function renderFeatureOptions() {
+    const candidates = selectedStories().filter(s => !$('leadOn').checked || s.id !== effectiveLeadId());
+    for(let i=0;i<2;i++) {
+      const sel = $('f'+(i+1)+'Story');
+      if(!candidates.some(s=>s.id === featureIds[i])) featureIds[i]='';
+      sel.innerHTML='<option value="">Choose a feature…</option>'+candidates.map(s=>`<option value="${esc(s.id)}">${esc(shortTitle(s.title))}</option>`).join('');
+      sel.value=featureIds[i];
+    }
+  }
+  function fillStoryCopy(id, prefix) {
+    const s=story(id); if(!s)return;
+    if(prefix==='hero') {
+      $('heroP1').value=(s.paragraphs || [])[0] || s.summary || '';
+      $('heroP2').value=(s.paragraphs || [])[1] || '';
+      $('bullets').value=(s.takeaways || []).join('\n');
+    } else {
+      $(prefix+'Paragraph').value=s.summary || '';
+      $(prefix+'Bullets').value=(s.takeaways || []).slice(0,2).join('\n');
+    }
+  }
+  [1,2].forEach(n=>$('f'+n+'Story').addEventListener('change', e=> {
+    featureIds[n-1]=e.target.value;
+    if(featureIds[n-1] && featureIds[n-1]===featureIds[2-n]) { featureIds[2-n]=''; toast('A story can appear in only one feature slot.'); }
+    fillStoryCopy(e.target.value,'f'+n); renderFeatureOptions(); changed();
+  }));
+
   function renderMetricOptions() {
     const sel = $('mLink');
     const opts = ['<option value="">No link</option>']
@@ -317,6 +356,7 @@
   list.addEventListener('click', (e) => {
     const li = e.target.closest('li[data-id]');
     if (!li) return;
+    const previousLead = effectiveLeadId();
     const id = li.dataset.id;
     const act = e.target.closest('[data-act]');
     if (!act) return;
@@ -326,6 +366,7 @@
         if (selected.has(id)) selected.delete(id);
         else selected.add(id);
         if (!selected.has(leadId)) leadId = '';
+        if(S.mode==='bess' && previousLead!==effectiveLeadId()) fillStoryCopy(effectiveLeadId(),'hero');
         renderStories();
         break;
       case 'edit':
@@ -405,6 +446,7 @@
 
   $('leadStory').addEventListener('change', (e) => {
     leadId = e.target.value;
+    fillStoryCopy(leadId,'hero');
     renderStories();
   });
 
@@ -454,6 +496,7 @@
     form.reset();
     DAILY.forEach((id) => ($(id).value = ''));
     overrides = {};
+    featureIds = ['', ''];
     leadId = '';
     metricLink = '';
     openEditors.clear();
@@ -480,7 +523,9 @@
       date: $('nlDate').value ? new Date($('nlDate').value + 'T12:00:00') : new Date(),
       issue: $('issue').value,
       today: $('today').value,
-      lead: { enabled: $('leadOn').checked && !!lid, story: lid ? story(lid) : null, bullets: $('bullets').value },
+      lead: { enabled: $('leadOn').checked && !!lid, story: lid ? story(lid) : null, bullets: $('bullets').value, paragraph1:$('heroP1').value, paragraph2:$('heroP2').value },
+      features: [1,2].map(n=>({enabled:$('f'+n+'On').checked, story:story(featureIds[n-1]), paragraph:$('f'+n+'Paragraph').value, bullets:$('f'+n+'Bullets').value})),
+      ads: Object.fromEntries(['top','middle','bottom'].map(k=>[k,{enabled:$('ad'+k+'On').checked,image:$('ad'+k+'Image').value.trim(),url:$('ad'+k+'Url').value.trim(),label:$('ad'+k+'Label').value.trim()}])),
       sponsored: {
         enabled: $('spOn').checked,
         title: $('spTitle').value.trim(),
@@ -530,11 +575,16 @@
 
       const warn = [];
       if (!stats.stories) warn.push('no stories selected');
+      if(S.mode==='bess' && ed.lead.enabled && (!ed.lead.paragraph1.trim() || !ed.lead.paragraph2.trim())) warn.push('hero needs two paragraphs');
+      if(S.mode==='bess' && ed.lead.enabled && !C.parseBullets(ed.lead.bullets).length) warn.push('hero highlights are empty');
+      if(S.mode==='bess') ed.features.forEach((f,i)=> { if(f.enabled && !f.story)warn.push('choose feature '+(i+1)); else if(f.enabled && !f.paragraph.trim()) warn.push('feature '+(i+1)+' needs a paragraph'); else if(f.enabled && C.parseBullets(f.bullets).length!==2) warn.push('feature '+(i+1)+' needs two bullets'); });
+      Object.entries(ed.ads).forEach(([k,a])=> {if(a.enabled && (!window.NLCommon.safeUrl(a.image,'') || !window.NLCommon.safeUrl(a.url,'')))warn.push(k+' ad needs valid image and link URLs');});
       if ($('mOn').checked && !ed.metric.value) warn.push('metric is empty');
       if ($('spOn').checked && !ed.sponsored.text && !ed.sponsored.title) warn.push('sponsored is empty');
       setStatus(warn.length ? 'Check: ' + warn.join(', ') : 'Ready · ' + stats.dateLabel, warn.length ? 'busy' : 'ok');
     } catch (err) {
       setStatus('Error', 'err');
+      resultBtns.forEach(b=>b.disabled=true);
       toast(err.message || String(err), 'err');
     }
   }
@@ -579,6 +629,8 @@
   // ---------- start ----------
 
   restore();
+  if(items.length){$('filterWrap').hidden=false;renderStories();build();}
   // Load the default feed straight away so the editor opens on today's stories.
   if (location.protocol.startsWith('http')) $('loadBtn').click();
 })();
+

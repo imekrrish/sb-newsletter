@@ -13,6 +13,9 @@ const opt = (name) => {
   const i = args.indexOf(name);
   return i >= 0 ? args.splice(i, 2)[1] : undefined;
 };
+const mode = opt('--mode') || 'sb';
+if(!['bess','sb'].includes(mode)) throw new Error('Mode must be bess or sb');
+const S = require(mode === 'bess' ? './public/bess-settings' : './public/settings');
 const editionFile = opt('--edition');
 const flags = { date: opt('--date'), issue: opt('--issue'), today: opt('--today') };
 const [input, output] = args;
@@ -32,7 +35,7 @@ async function readFeed(src) {
 }
 
 (async () => {
-  const feed = C.parseRss(await readFeed(input));
+  const feed = C.parseRss(await readFeed(input),S);
   const ed = editionFile ? JSON.parse(fs.readFileSync(editionFile, 'utf8')) : {};
   Object.keys(flags).forEach((k) => flags[k] !== undefined && (ed[k] = flags[k]));
 
@@ -50,11 +53,13 @@ async function readFeed(src) {
     date: ed.date ? new Date(ed.date + 'T12:00:00') : new Date(),
     issue: ed.issue,
     today: ed.today,
-    lead: { enabled: !!leadStory, story: leadStory, bullets: [].concat(leadConf.bullets || []).join('\n') },
+    lead: { enabled: !!leadStory, story: leadStory, bullets: [].concat(leadConf.bullets || leadStory?.takeaways || []).join('\n'), paragraph1:leadConf.paragraph1 || leadStory?.paragraphs?.[0] || leadStory?.summary,paragraph2:leadConf.paragraph2 || leadStory?.paragraphs?.[1] },
+    features: (ed.features || stories.slice(1,3).map(s=>({link:s.link,enabled:true}))).map(f=>({...f,enabled:f.enabled!==false,story:pick(f.link),bullets:[].concat(f.bullets || pick(f.link)?.takeaways?.slice(0,2) || []).join('\n')})),
+    ads: ed.ads,
     sponsored: ed.sponsored,
     metric: ed.metric,
     stories,
-  });
+  }, S);
 
   const out = output || stats.fileName;
   fs.writeFileSync(out, html);
@@ -65,3 +70,4 @@ async function readFeed(src) {
   console.error(err.message || err);
   process.exit(1);
 });
+

@@ -15,7 +15,8 @@
   }
 
   // Merge tags such as $[USER:UNSUB_LINK]$ must reach the ESP untouched.
-  const href = (u) => esc(String(u || '').trim() || '#');
+  const U = root.NLCommon || require('./common');
+  const href = (u) => esc(U.safeUrl(u));
 
   const FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
 
@@ -32,7 +33,7 @@
     // <img> sized for email: exact-size CDN crops scale with height:auto,
     // other hosts fall back to a fixed box with object-fit.
     function img(url, size, w, hgt, alt, cls, extra) {
-      const src = h.sizedImage(url, size);
+      const src = U.safeUrl(h.sizedImage(url, size), '');
       const box = isCdn(src) ? 'height: auto;' : `height: ${hgt}px; object-fit: cover;`;
       return `<img src="${esc(src)}" alt="${esc(alt)}" width="${w}" height="${hgt}" class="${cls}" style="display: block; width: ${w === 600 ? '100%' : w + 'px'}; max-width: ${w}px; ${box} border: 0; outline: none; text-decoration: none; ${extra || ''}">`;
     }
@@ -294,7 +295,7 @@
       <td align="center" class="outer-pad" style="padding: 24px 0;">
         <!--[if mso]><table role="presentation" width="600" border="0" cellpadding="0" cellspacing="0" align="center"><tr><td><![endif]-->
         <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="600" class="main-table" bgcolor="#ffffff" style="width: 600px; max-width: 600px; background-color: #ffffff; border: 1px solid ${C.line}; border-radius: 8px; border-collapse: separate; overflow: hidden; margin: 0 auto;">
-${header}${today}${lead}${sponsored}${sections}${metric}${footer}
+${header}${today}${U.ad(d.ads.top,600)}${lead}${sponsored}${U.ad(d.ads.middle,600)}${sections}${metric}${U.ad(d.ads.bottom,600)}${footer}
         </table>
         <!--[if mso]></td></tr></table><![endif]-->
       </td>
@@ -308,3 +309,4 @@ ${header}${today}${lead}${sponsored}${sections}${metric}${footer}
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.SBTemplate = api;
 })(typeof window !== 'undefined' ? window : globalThis);
+

@@ -95,3 +95,4 @@
   if (typeof module !== 'undefined' && module.exports) module.exports = settings;
   else root.SBSettings = settings;
 })(typeof window !== 'undefined' ? window : globalThis);
+

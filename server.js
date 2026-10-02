@@ -14,8 +14,10 @@ http
     const u = new URL(req.url, 'http://localhost');
     if (u.pathname === '/api/rss') return rss(req, res);
 
-    const file = path.normalize(path.join(PUBLIC, decodeURIComponent(u.pathname === '/' ? 'index.html' : u.pathname)));
-    if (!file.startsWith(PUBLIC)) {
+    let pathname;
+    try { pathname = decodeURIComponent(u.pathname); } catch { res.writeHead(400); return res.end('Invalid path'); }
+    const file = path.resolve(PUBLIC, '.' + (pathname.endsWith('/') ? pathname+'index.html' : pathname));
+    if (!file.startsWith(PUBLIC + path.sep)) {
       res.writeHead(403);
       return res.end();
     }
@@ -28,4 +30,5 @@ http
       res.end(data);
     });
   })
-  .listen(PORT, () => console.log(`SOLARbytes newsletter generator: http://localhost:${PORT}`));
+  .listen(PORT, () => console.log(`Newsletter studio: http://localhost:${PORT}`));
+

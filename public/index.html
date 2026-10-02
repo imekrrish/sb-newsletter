@@ -19,6 +19,7 @@
       <p>Turn the SOLARbytes feed into the Daily Digest email</p>
     </div>
   </div>
+  <nav class="publication-tabs" aria-label="Publication"><a href="/?mode=sb" data-mode="sb">SOLARbytes</a><a href="/?mode=bess" data-mode="bess">BESSNEWS</a></nav>
   <span id="status" class="status">Ready</span>
 </header>
 
@@ -48,7 +49,7 @@
           <input id="rssFile" type="file" accept=".rss,.xml,application/rss+xml,text/xml">
           <svg viewBox="0 0 24 24" class="drop-ico"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>
           <span class="drop-main" id="dropText">Drop the <b>.rss</b> file here or <u>browse</u></span>
-          <span class="drop-sub">Saved copy of solarbytes.info/rss</span>
+          <span class="drop-sub">Saved copy of your publication’s RSS feed</span>
         </label>
       </div>
 
@@ -74,32 +75,33 @@
       </div>
 
       <label class="lbl" for="today">Summary <span class="muted">· shown after the “Today:” label</span></label>
-      <textarea id="today" rows="3" class="ta" data-save placeholder="NTPC REL invites 1 GW EPC bids in Andhra Pradesh, LONGi hits 28.29% cell efficiency, and Ørsted starts 200 MW US construction."></textarea>
+      <textarea id="today" rows="3" class="ta" data-save placeholder="Write today’s briefing summary…"></textarea>
       <div class="counter"><span id="todayCount">0</span> characters · also used as the inbox preview text</div>
     </section>
 
     <!-- 3. Lead byte -->
     <section class="step">
-      <div class="step-head"><span class="num">3</span><div><h2>The Lead Byte</h2><p>Hero story with a large image and key figures</p></div></div>
+      <div class="step-head"><span class="num">3</span><div><h2 id="leadHeading">The Lead Byte</h2><p id="leadDescription">Hero story with a large image and key figures</p></div></div>
 
       <label class="switch">
         <input type="checkbox" id="leadOn" checked data-save>
         <span class="track"></span>
-        <span>Include <b>THE LEAD BYTE</b></span>
+        <span>Include <b id="leadLabel">THE LEAD BYTE</b></span>
       </label>
 
       <div class="when" data-when="leadOn">
         <label class="lbl" for="leadStory">Lead story</label>
         <div class="input-wrap select-wrap"><select id="leadStory"><option value="">Load stories first</option></select></div>
 
+        <div data-bess><label class="lbl" for="heroP1">Hero paragraph 1</label><textarea id="heroP1" class="ta" rows="3" data-save placeholder="First paragraph from the article; edit as needed."></textarea><label class="lbl" for="heroP2">Hero paragraph 2</label><textarea id="heroP2" class="ta" rows="3" data-save placeholder="Second paragraph. Enter editorial copy if the feed only has an excerpt."></textarea></div>
         <label class="lbl" for="bullets">Bullet points <span class="muted">· one per line, “Label: text” makes the label bold</span></label>
-        <textarea id="bullets" rows="4" class="ta mono" data-save placeholder="Total Capacity: 1,000 MW (AC) / 2 × 500 MW units&#10;Location: Kambadur, Anantapur, Andhra Pradesh&#10;Mandate: Turnkey EPC + 3-year O&amp;M from COD"></textarea>
+        <textarea id="bullets" rows="4" class="ta mono" data-save placeholder="Capacity: Add a verified project figure&#10;Technical detail: Add an article takeaway&#10;Commercial impact: Add the key implication"></textarea>
       </div>
     </section>
 
-    <!-- 4. Sponsored -->
+    <section class="step" data-bess><div class="step-head"><span class="num">4</span><div><h2>Secondary features</h2><p>Two stories: medium image, one paragraph and two quick bullets each</p></div></div><label class="switch"><input id="f1On" type="checkbox" checked data-save><span class="track"></span><span>Include Feature 1</span></label><div class="when" data-when="f1On"><label class="lbl" for="f1Story">Feature 1 story</label><select id="f1Story" class="ta"><option value="">Load stories first</option></select><label class="lbl" for="f1Paragraph">Paragraph</label><textarea id="f1Paragraph" class="ta" rows="3" data-save></textarea><label class="lbl" for="f1Bullets">Two quick bullets · one per line</label><textarea id="f1Bullets" class="ta" rows="3" data-save></textarea></div><label class="switch"><input id="f2On" type="checkbox" checked data-save><span class="track"></span><span>Include Feature 2</span></label><div class="when" data-when="f2On"><label class="lbl" for="f2Story">Feature 2 story</label><select id="f2Story" class="ta"><option value="">Load stories first</option></select><label class="lbl" for="f2Paragraph">Paragraph</label><textarea id="f2Paragraph" class="ta" rows="3" data-save></textarea><label class="lbl" for="f2Bullets">Two quick bullets · one per line</label><textarea id="f2Bullets" class="ta" rows="3" data-save></textarea></div></section><section class="step"><div class="step-head"><span class="num">5</span><div><h2>Advertisement slots</h2><p>Optional banners at the top, middle and above the footer</p></div></div><label class="switch"><input id="adtopOn" type="checkbox" data-save><span class="track"></span><span>Top leaderboard · 600 × 90</span></label><div class="when" data-when="adtopOn"><label class="lbl" for="adtopImage">Image URL</label><input id="adtopImage" type="url" class="ta" data-save placeholder="https://…/banner.jpg"><label class="lbl" for="adtopUrl">Destination URL</label><input id="adtopUrl" type="url" class="ta" data-save placeholder="https://"><label class="lbl" for="adtopLabel">Sponsor label / image alt text</label><input id="adtopLabel" class="ta" data-save placeholder="Sponsor name"></div><label class="switch"><input id="admiddleOn" type="checkbox" data-save><span class="track"></span><span>Middle banner · 600 × 120</span></label><div class="when" data-when="admiddleOn"><label class="lbl" for="admiddleImage">Image URL</label><input id="admiddleImage" type="url" class="ta" data-save placeholder="https://…/banner.jpg"><label class="lbl" for="admiddleUrl">Destination URL</label><input id="admiddleUrl" type="url" class="ta" data-save placeholder="https://"><label class="lbl" for="admiddleLabel">Sponsor label / image alt text</label><input id="admiddleLabel" class="ta" data-save placeholder="Sponsor name"></div><label class="switch"><input id="adbottomOn" type="checkbox" data-save><span class="track"></span><span>Footer banner · 600 × 100</span></label><div class="when" data-when="adbottomOn"><label class="lbl" for="adbottomImage">Image URL</label><input id="adbottomImage" type="url" class="ta" data-save placeholder="https://…/banner.jpg"><label class="lbl" for="adbottomUrl">Destination URL</label><input id="adbottomUrl" type="url" class="ta" data-save placeholder="https://"><label class="lbl" for="adbottomLabel">Sponsor label / image alt text</label><input id="adbottomLabel" class="ta" data-save placeholder="Sponsor name"></div></section><!-- 4. Sponsored -->
     <section class="step">
-      <div class="step-head"><span class="num">4</span><div><h2>Sponsored content</h2><p>Partner block shown under the lead story</p></div></div>
+      <div class="step-head"><span class="num">6</span><div><h2>Sponsored content</h2><p>Partner block shown under the lead story</p></div></div>
 
       <label class="switch">
         <input type="checkbox" id="spOn" data-save>
@@ -109,7 +111,7 @@
 
       <div class="when" data-when="spOn">
         <label class="lbl" for="spTitle">Headline</label>
-        <input id="spTitle" class="ta" data-save placeholder="Tier-1 TOPCon Glass-Glass Modules for C&amp;I Rooftops">
+        <input id="spTitle" class="ta" data-save placeholder="Partner product or event headline">
         <label class="lbl" for="spText">Text</label>
         <textarea id="spText" rows="3" class="ta" data-save placeholder="High bifaciality with lower degradation curves…"></textarea>
         <div class="row">
@@ -132,7 +134,7 @@
 
     <!-- 5. Metric -->
     <section class="step">
-      <div class="step-head"><span class="num">5</span><div><h2>Metric of the day</h2><p>The big number near the end of the email</p></div></div>
+      <div class="step-head"><span class="num">7</span><div><h2>Metric of the day</h2><p>The big number near the end of the email</p></div></div>
 
       <label class="switch">
         <input type="checkbox" id="mOn" checked data-save>
@@ -161,7 +163,7 @@
 
     <!-- 6. Stories -->
     <section class="step step-stories">
-      <div class="step-head"><span class="num">6</span><div><h2>Stories</h2><p>Tick stories to include. Edit any title, summary, tag, section or image.</p></div></div>
+      <div class="step-head"><span class="num">8</span><div><h2>Stories</h2><p>Tick stories to include. Edit any title, summary, tag, section or image.</p></div></div>
 
       <div class="story-tools">
         <span class="muted" id="selCount">No feed loaded</span>
@@ -211,16 +213,21 @@
         <h3>No newsletter yet</h3>
         <p>Hit <b>Load stories</b> on the left. The email appears here and updates as you type.</p>
       </div>
-      <iframe id="preview" title="Newsletter preview" hidden></iframe>
+      <iframe sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox" id="preview" title="Newsletter preview" hidden></iframe>
     </div>
   </section>
 </main>
 
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
+<script src="common.js"></script>
 <script src="settings.js"></script>
+<script src="bess-settings.js"></script>
+<script src="bess-template.js"></script>
+<script src="mode.js"></script>
 <script src="template.js"></script>
 <script src="converter.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
+

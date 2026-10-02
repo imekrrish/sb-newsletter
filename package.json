@@ -2,11 +2,12 @@
   "name": "sb-newsletter",
   "version": "1.0.0",
   "private": true,
-  "description": "Generate the SOLARbytes Daily Digest email HTML from the solarbytes.info RSS feed",
+  "description": "SOLARbytes and BESSNEWS newsletter studio",
   "scripts": {
     "start": "node server.js",
     "newsletter": "node cli.js",
-    "build": "node -e \"console.log('Static site: nothing to build. Files are served from public/.')\""
+    "build": "node -e \"console.log('Static site: nothing to build. Files are served from public/.')\"",
+    "test": "node --test tests/*.test.js"
   },
   "engines": {
     "node": "22.x"

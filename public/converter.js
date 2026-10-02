@@ -10,7 +10,8 @@
   const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   const getSettings = () => root.SBSettings || require('./settings');
-  const getTemplate = () => root.SBTemplate || require('./template');
+  const getTemplate = (S) => S.mode === 'bess' ? (root.BESSTemplate || require('./bess-template')) : (root.SBTemplate || require('./template'));
+  const U = root.NLCommon || require('./common');
 
   // ---------- text helpers ----------
 
@@ -116,13 +117,15 @@
 
   // "Policy" -> "Policy Bytes" so tags read consistently.
   function tagLabel(cat) {
-    return /bytes$/i.test(cat) ? cat : cat + ' Bytes';
+    return getSettings().mode === 'bess' ? cat : /bytes$/i.test(cat) ? cat : cat + ' Bytes';
   }
 
   function classify(categories, S) {
     S = S || getSettings();
     const cats = categories.map(norm);
-    const section = S.sections.find((s) => s.match.some((m) => cats.includes(norm(m))));
+    const parents = S.mode === 'bess' ? ['projects','deployments','markets','markets & tenders','policy','policy & regulation','technology','tech','finance','business','global'] : [];
+    const parent = cats.find(c => parents.includes(c));
+    const section = S.sections.find(s => cats.includes(norm(s.name))) || (parent && S.sections.find(s => s.match.map(norm).includes(parent))) || S.sections.find((s) => s.match.some((m) => cats.includes(norm(m))));
     const hidden = new Set(S.hiddenCategories.map(norm));
     const regional = new Set(
       S.sections.filter((s) => !/tech|bess/i.test(s.name)).flatMap((s) => s.match.map(norm))
@@ -133,7 +136,7 @@
     if (!tagCat && section) tagCat = categories.find((c) => section.match.map(norm).includes(norm(c)));
     return {
       section: section ? section.name : S.fallbackSection,
-      tag: tagCat ? tagLabel(tagCat) : 'News Bytes',
+      tag: S.mode === 'bess' ? categories.filter(c => !hidden.has(norm(c)) && !S.sections.some(s => norm(s.name) === norm(c))).join(' • ') : tagCat ? tagLabel(tagCat) : 'News Bytes',
       pick: categories.some((c) => norm(c) === norm(S.pickCategory)),
     };
   }
@@ -151,6 +154,9 @@
       const it = m[1];
       const categories = tags(it, 'category').map(textOf).filter(Boolean);
       const descHtml = tag(it, 'description');
+      const contentHtml = tag(it, 'content:encoded') || descHtml;
+      const paragraphs = [...contentHtml.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/gi)].map(m=>textOf(m[1])).filter(Boolean);
+      const takeaways = [...contentHtml.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/gi)].slice(0,8).map(m=>textOf(m[1])).filter(Boolean);
       const firstP = /<p[^>]*>([\s\S]*?)<\/p>/i.exec(descHtml);
       const pub = new Date(textOf(tag(it, 'pubDate')));
       const link = textOf(tag(it, 'link')) || textOf(tag(it, 'guid'));
@@ -168,6 +174,7 @@
             attr(descHtml, 'img', 'src') ||
             attr(it, 'enclosure', 'url'),
           summary: textOf(firstP ? firstP[1] : descHtml),
+          paragraphs, takeaways,
         },
         classify(categories, S)
       );
@@ -197,8 +204,8 @@
   }
 
   // "SB_1Oct2026.html"
-  function fileName(d) {
-    return `SB_${d.getDate()}${MONTHS[d.getMonth()].slice(0, 3)}${d.getFullYear()}.html`;
+  function fileName(d, S = getSettings()) {
+    return `${S.mode === 'bess' ? 'BN' : 'SB'}_${d.getDate()}${MONTHS[d.getMonth()].slice(0, 3)}${d.getFullYear()}.html`;
   }
 
   // ---------- bullets ----------
@@ -232,7 +239,18 @@
     const date = edition.date instanceof Date && !isNaN(edition.date) ? edition.date : new Date();
     const lead = edition.lead && edition.lead.enabled && edition.lead.story ? edition.lead : null;
     const leadId = lead ? lead.story.id || lead.story.link : null;
-    const stories = (edition.stories || []).filter((s) => !leadId || (s.id || s.link) !== leadId);
+    const featureIds = new Set();
+    const features = S.mode === 'bess' ? (edition.features || []).slice(0,2).filter(f => {
+      const id = f.story && (f.story.id || f.story.link);
+      if (!f.enabled || !id || id === leadId || featureIds.has(id)) return false;
+      featureIds.add(id); return true;
+    }).slice(0, 2).map(f => ({story:f.story, paragraph:f.paragraph || '', bullets:parseBullets(f.bullets).slice(0,2)})) : [];
+    const seen = new Set();
+    const stories = (edition.stories || []).filter(s => {
+      const id = s.id || s.link;
+      if (id === leadId || featureIds.has(id) || seen.has(id)) return false;
+      seen.add(id); return true;
+    });
 
     // Group into sections in the configured order. Unknown section names go last.
     const order = S.sections.map((s) => s.name);
@@ -253,14 +271,16 @@
     const metric =
       edition.metric && edition.metric.enabled && String(edition.metric.value || '').trim() ? edition.metric : null;
 
-    const html = asciiSafe(getTemplate().page(
+    const html = asciiSafe(getTemplate(S).page(
       {
         dateLong: longDate(date),
         dateShort: shortDate(date),
         year: date.getFullYear(),
         issue: String(edition.issue || '').trim(),
         today: String(edition.today || '').trim(),
-        lead: lead && { story: lead.story, bullets: parseBullets(lead.bullets) },
+        lead: lead && { story: lead.story, bullets: parseBullets(lead.bullets), paragraphs:[lead.paragraph1,lead.paragraph2].filter(x => String(x || '').trim()) },
+        features,
+        ads: edition.ads || {},
         sponsored,
         metric,
         groups,
@@ -272,13 +292,14 @@
     return {
       html,
       stats: {
-        stories: stories.length + (lead ? 1 : 0),
+        stories: stories.length + (lead ? 1 : 0) + features.length,
+        features: features.length,
         sections: groups.map((g) => `${g.name} (${g.items.length})`),
         lead: !!lead,
         sponsored: !!sponsored,
         metric: !!metric,
         dateLabel: shortDate(date),
-        fileName: fileName(date),
+        fileName: fileName(date,S),
       },
     };
   }
@@ -290,3 +311,4 @@
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.SBConverter = api;
 })(typeof window !== 'undefined' ? window : globalThis);
+
