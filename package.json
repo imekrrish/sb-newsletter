@@ -5,9 +5,10 @@
   "description": "Generate the SOLARbytes Daily Digest email HTML from the solarbytes.info RSS feed",
   "scripts": {
     "start": "node server.js",
-    "build": "node cli.js"
+    "newsletter": "node cli.js",
+    "build": "node -e \"console.log('Static site: nothing to build. Files are served from public/.')\""
   },
   "engines": {
-    "node": ">=18"
+    "node": "22.x"
   }
 }

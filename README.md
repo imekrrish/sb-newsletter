@@ -73,10 +73,22 @@ Without `--edition`, the CLI uses the NL-tagged stories and makes the first one 
 
 `sample-output.html` was built from the live feed on 2 Oct 2026 with `edition.example.json`.
 
+## Deploying to Vercel
+
+Import the repo in Vercel and keep the defaults. `vercel.json` already sets everything:
+
+- **Build:** `npm run build` only prints a message, because there is nothing to compile.
+- **Output:** the `public` folder is served as the site.
+- **Feed proxy:** `api/rss.js` runs as a serverless function at `/api/rss`. It only passes through RSS or XML responses.
+
+The command-line builder is `npm run newsletter -- <feed> [out.html] …`, not `npm run build`.
+
 ## Files
 
 ```
-server.js            static server + RSS proxy (avoids browser CORS)
+server.js            local static server (uses api/rss.js for the feed proxy)
+api/rss.js           RSS proxy, also the Vercel serverless function
+vercel.json          Vercel settings: serve public/, run api/rss.js
 cli.js               command-line build
 public/settings.js   brand, sections, labels, footer, image sizes
 public/converter.js  RSS parsing, section and tag classification, image sizing
