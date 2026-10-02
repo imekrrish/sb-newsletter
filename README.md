@@ -36,7 +36,18 @@ The UI flags missing hero paragraphs/highlights, secondary feature copy, and inc
 
 ## Categories and tags
 
-Edit `public/bess-settings.js`. Parent topic categories take precedence over child tag pills. The inferred parent groups are Projects & Deployments; Markets & Tenders; Policy, Grid & Regulation; Technology & Manufacturing; Finance & Business; Regional & Global Signals. The screenshot's cropped right edge prevents recovery of every tag; visible tags and the HTML's categories are included, and unknown stories fall back to Regional & Global Signals. All non-NL tags remain editable, so the complete taxonomy can be applied without code changes to individual stories.
+Edit `public/bess-settings.js`. The supplied category table is implemented exactly:
+
+| Newsletter header | Parent category | Child tag pills |
+| --- | --- | --- |
+| PROJECTS & DEPLOYMENTS | Projects | Utility, Grid-Scale, Commercial, Data Centers, EV Charging, Microgrids, Off-Grid, Residential, Under Development |
+| MARKETS & TENDERS | Markets / Tender | Deployments, Outlook, Power Markets, Supply Chain, Open Tenders, Awarded, By Country |
+| POLICY, GRID & REGULATION | Policy | Government, Grid, Regulation, EU Battery, Grid Interconnection, National, US & IRA |
+| TECHNOLOGY & SYSTEM DESIGN | Technology | Chemistry, Manufacturing, Fire Safety, Components, System Design, Co-location, EMS & Software |
+| FINANCE, DEALS & M&A | Business & Finance | Contracts, Expansion, Leadership, Strategy, Capital Raise, Infrastructure, M&A, Venture, Corporate, Hybrid Solar+BESS, Utility PPA |
+| REGIONAL INTELLIGENCE | Regional Parent | Asia Pacific, Europe, Latin America, Middle East, North America |
+
+Parent categories determine the newsletter group; child categories appear as article tag pills. Parent/header names and NL are omitted from pills. Parent grouping takes precedence over a child tag from another group. Existing heading aliases migrate saved drafts; unknown stories fall back to REGIONAL INTELLIGENCE.
 
 ## SOLARbytes
 

@@ -97,7 +97,8 @@
       pending = { selected: d.selected || [], leadId: d.leadId || '', metricLink: d.metricLink || '' };
       overrides = d.overrides || {};
       featureIds = d.featureIds || ['', ''];
-      items = d.items || [];
+      items = (d.items || []).map(it => ({...it,...C.classify(it.categories || [],S)}));
+      if(S.mode==='bess') Object.values(overrides).forEach(o => {if(o.section) o.section=S.sectionAliases[o.section] || o.section;});
       selected = new Set((d.selected || []).filter(id => items.some(i => i.id === id)));
       leadId = d.leadId || '';
     } else {

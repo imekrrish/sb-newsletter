@@ -123,9 +123,11 @@
   function classify(categories, S) {
     S = S || getSettings();
     const cats = categories.map(norm);
-    const parents = S.mode === 'bess' ? ['projects','deployments','markets','markets & tenders','policy','policy & regulation','technology','tech','finance','business','global'] : [];
-    const parent = cats.find(c => parents.includes(c));
-    const section = S.sections.find(s => cats.includes(norm(s.name))) || (parent && S.sections.find(s => s.match.map(norm).includes(parent))) || S.sections.find((s) => s.match.some((m) => cats.includes(norm(m))));
+    const section = S.mode === 'bess'
+      ? S.sections.find(s => cats.includes(norm(s.name)))
+        || S.sections.find(s => s.parents.some(p => cats.includes(norm(p))))
+        || S.sections.find(s => s.tags.some(t => cats.includes(norm(t))))
+      : S.sections.find((s) => s.match.some((m) => cats.includes(norm(m))));
     const hidden = new Set(S.hiddenCategories.map(norm));
     const regional = new Set(
       S.sections.filter((s) => !/tech|bess/i.test(s.name)).flatMap((s) => s.match.map(norm))
@@ -136,7 +138,7 @@
     if (!tagCat && section) tagCat = categories.find((c) => section.match.map(norm).includes(norm(c)));
     return {
       section: section ? section.name : S.fallbackSection,
-      tag: S.mode === 'bess' ? categories.filter(c => !hidden.has(norm(c)) && !S.sections.some(s => norm(s.name) === norm(c))).join(' • ') : tagCat ? tagLabel(tagCat) : 'News Bytes',
+      tag: S.mode === 'bess' ? categories.filter(c => !hidden.has(norm(c)) && !S.sections.some(s => norm(s.name) === norm(c) || (s.parents || []).some(p => norm(p) === norm(c)))).join(' • ') : tagCat ? tagLabel(tagCat) : 'News Bytes',
       pick: categories.some((c) => norm(c) === norm(S.pickCategory)),
     };
   }
@@ -246,7 +248,7 @@
       featureIds.add(id); return true;
     }).slice(0, 2).map(f => ({story:f.story, paragraph:f.paragraph || '', bullets:parseBullets(f.bullets).slice(0,2)})) : [];
     const seen = new Set();
-    const stories = (edition.stories || []).filter(s => {
+    const stories = (edition.stories || []).map(s => S.mode === 'bess' ? {...s,section:S.sectionAliases[s.section] || s.section} : s).filter(s => {
       const id = s.id || s.link;
       if (id === leadId || featureIds.has(id) || seen.has(id)) return false;
       seen.add(id); return true;
