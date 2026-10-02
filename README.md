@@ -43,6 +43,12 @@ Every story uses its feed image. Publive CDN images are requested at exact crop 
 
 Images from other hosts are used as-is. Stories without an image fall back to `images.fallback` in the settings file. Use public image URLs, because email clients block local files and data URIs.
 
+## Special characters
+
+Every non-ASCII character in the email, such as ’ – × €, is written as an HTML code like `&#8217;`. The email then shows them correctly even if the sending tool assumes the wrong character set.
+
+Emoji in feed text are removed, because email clients can't show them reliably. That includes emoji the feed already lost upstream as "?", such as `Conference - Online ?️`. When one is removed, the spaced " - " separator in that text goes too, so the title becomes `Conference Online`.
+
 ## Configuration
 
 Everything that stays the same between editions lives in `public/settings.js`:
@@ -65,7 +71,7 @@ node cli.js feed.rss --date 2026-10-02 --issue 143 --today "One-line summary"
 
 Without `--edition`, the CLI uses the NL-tagged stories and makes the first one the lead. `edition.example.json` shows every option. Its `stories` list takes story links, or objects with a `link` plus any fields to override.
 
-`sample-output.html` was built from the 1 Oct 2026 feed with `edition.example.json`.
+`sample-output.html` was built from the live feed on 2 Oct 2026 with `edition.example.json`.
 
 ## Files
 

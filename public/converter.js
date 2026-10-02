@@ -42,11 +42,35 @@
     return out;
   }
 
+  // Emoji can't be shown reliably in email, and feeds sometimes carry an emoji
+  // that was already lost upstream as "?" + an invisible variation selector
+  // (e.g. "Conference - Online ?️"). Both are removed. When something was
+  // removed, the spaced " - " separator left behind is dropped too, so that
+  // title becomes "Conference Online". (C) (R) TM are kept.
+  const LOST_EMOJI = /\?[︎️‍⃣]+|�/g;
+  const EMOJI = /(?![©®™])\p{Extended_Pictographic}(?:[︎️‍⃣]|\p{Emoji_Modifier}|\p{Extended_Pictographic})*/gu;
+  const INVISIBLE = /[︎️​-‍⁠⃣]/g;
+
+  function cleanText(s) {
+    let removed = false;
+    const hit = () => ((removed = true), ' ');
+    s = String(s || '').replace(LOST_EMOJI, hit).replace(EMOJI, hit).replace(INVISIBLE, '');
+    if (removed) s = s.replace(/\s+[-–—]\s+/g, ' ').replace(/\s+[-–—:|]\s*$/, '');
+    return s.replace(/[ \t]{2,}/g, ' ').replace(/ +([,.;:!?])/g, '$1').trim();
+  }
+
+  // Every non-ASCII character as a numeric entity (’ -> &#8217;) so no email
+  // tool can turn it into "?" because of a charset mismatch.
+  function asciiSafe(html) {
+    return String(html).replace(/[^\x00-\x7F]/gu, (ch) => '&#' + ch.codePointAt(0) + ';');
+  }
+
   function textOf(html) {
-    return decodeEntities(String(html || '').replace(/<[^>]*>/g, ' '))
-      .replace(/\s+/g, ' ')
-      .replace(/\s+([,.;:])/g, '$1')
-      .trim();
+    return cleanText(
+      decodeEntities(String(html || '').replace(/<[^>]*>/g, ' '))
+        .replace(/\s+/g, ' ')
+        .replace(/\s+([,.;:])/g, '$1')
+    );
   }
 
   function tag(xml, name) {
@@ -229,7 +253,7 @@
     const metric =
       edition.metric && edition.metric.enabled && String(edition.metric.value || '').trim() ? edition.metric : null;
 
-    const html = getTemplate().page(
+    const html = asciiSafe(getTemplate().page(
       {
         dateLong: longDate(date),
         dateShort: shortDate(date),
@@ -243,7 +267,7 @@
       },
       S,
       { sizedImage, shorten }
-    );
+    ));
 
     return {
       html,
@@ -260,7 +284,7 @@
   }
 
   const api = {
-    parseRss, classify, defaultSelection, buildNewsletter, parseBullets,
+    parseRss, classify, defaultSelection, buildNewsletter, parseBullets, cleanText, asciiSafe,
     sizedImage, shorten, longDate, shortDate, fileName,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
