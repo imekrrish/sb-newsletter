@@ -3,8 +3,8 @@
   const solar = root.SBSettings || require('./settings');
   const S = JSON.parse(JSON.stringify(solar));
   S.mode = 'bess';
-  S.brand = { ...solar.brand, name:'BESSNEWS', logoFirst:'BESS', logoAccent:'NEWS', title:'BESSNews Executive Briefing', siteUrl:'https://bessnews.com' };
-  S.feedUrl = 'https://bessnews.com/rss';
+  S.brand = { ...solar.brand, name:'BESSNEWS', logoPath:'/assets/bessnews-logo.jpeg', logoFirst:'BESS', logoAccent:'NEWS', title:'BESSNews Executive Briefing', siteUrl:'https://bessnews.com' };
+  S.feedUrl = 'https://bessnews.com/api/v1/collections/nl.rss';
   S.colors = {...solar.colors, ink:'#0a192f', accent:'#10b981', accentDark:'#059669', pillBg:'#ecfdf5', pillText:'#065f46', pillLine:'#a7f3d0'};
   // Exact newsletter taxonomy from the supplied category table.
   // Parent aliases support existing feeds; child categories become tag pills.

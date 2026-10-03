@@ -16,6 +16,8 @@ const opt = (name) => {
 const mode = opt('--mode') || 'sb';
 if(!['bess','sb'].includes(mode)) throw new Error('Mode must be bess or sb');
 const S = require(mode === 'bess' ? './public/bess-settings' : './public/settings');
+const assetBase = opt('--asset-base-url') || process.env.NEWSLETTER_ASSET_BASE_URL;
+if(assetBase) S.assetBaseUrl = assetBase;
 const editionFile = opt('--edition');
 const flags = { date: opt('--date'), issue: opt('--issue'), today: opt('--today') };
 const [input, output] = args;

@@ -226,6 +226,7 @@
     const footer = `
           <tr>
             <td class="px" bgcolor="${C.canvas}" align="center" style="background-color: ${C.canvas}; border-top: 1px solid ${C.line}; padding: 22px 24px; text-align: center; font-family: ${FONT}; font-size: 12px; line-height: 19px; color: ${C.muted};">
+              ${U.publisherLogo(S)}
               <p style="margin: 0 0 14px 0; color: ${C.body};">${esc(F.feedbackQuestion)}&nbsp; ${btn(F.helpfulUrl, 'Helpful')}&nbsp; ${btn(F.notForMeUrl, 'Not for me')}</p>
               <p style="margin: 0 0 12px 0;">${F.channels
                 .map(
@@ -295,7 +296,7 @@
       <td align="center" class="outer-pad" style="padding: 24px 0;">
         <!--[if mso]><table role="presentation" width="600" border="0" cellpadding="0" cellspacing="0" align="center"><tr><td><![endif]-->
         <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="600" class="main-table" bgcolor="#ffffff" style="width: 600px; max-width: 600px; background-color: #ffffff; border: 1px solid ${C.line}; border-radius: 8px; border-collapse: separate; overflow: hidden; margin: 0 auto;">
-${header}${today}${U.ad(d.ads.top,600)}${lead}${sponsored}${U.ad(d.ads.middle,600)}${sections}${metric}${U.ad(d.ads.bottom,600)}${footer}
+${U.publicationLogo(S)}${header}${today}${U.ad(d.ads.top,600)}${lead}${sponsored}${U.ad(d.ads.middle,600)}${sections}${metric}${U.ad(d.ads.bottom,600)}${footer}
         </table>
         <!--[if mso]></td></tr></table><![endif]-->
       </td>

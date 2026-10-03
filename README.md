@@ -21,7 +21,7 @@ No dependency install is required. Use the publication tabs:
 
 ## BESS workflow
 
-1. Load `https://bessnews.com/rss`, or upload an RSS/XML file.
+1. Load `https://bessnews.com/api/v1/collections/nl.rss`, or upload an RSS/XML file.
 2. Select stories; NL-tagged stories are selected by default. If the feed has no NL picks, the latest 24 hours are selected.
 3. Write the Today summary and set the edition date and issue number.
 4. Choose the hero, review its two paragraphs, and add in-depth bullet highlights. Article paragraphs/takeaways are extracted from RSS content when available. Missing editorial text is flagged rather than invented.
@@ -56,9 +56,9 @@ SOLARbytes keeps its existing lead/story/metric layout and gains the same three 
 ## CLI
 
 ```sh
-node cli.js tests/sample.rss sample-bess-output.html --mode bess --edition edition.bess.example.json
-node cli.js feed.rss out.html --mode bess --date 2026-10-03 --issue 9 --today "Today's summary"
-node cli.js feed.rss out.html --mode sb
+node cli.js tests/sample.rss sample-bess-output.html --mode bess --asset-base-url https://your-deployment-domain --edition edition.bess.example.json
+node cli.js feed.rss out.html --mode bess --asset-base-url https://your-deployment-domain --date 2026-10-03 --issue 9 --today "Today's summary"
+node cli.js feed.rss out.html --mode sb --asset-base-url https://your-deployment-domain
 ```
 
 The CLI defaults to SOLARbytes; `--mode bess` creates a hero and the next two features. `edition.bess.example.json` illustrates explicit feature overrides, hero paragraphs, sponsored copy and ads. Arrays of bullet strings are supported. Sample files contain clearly marked illustrative copy, not verified current news. Replace every sample sponsor image, link and fact before publication.
@@ -81,3 +81,9 @@ The proxy allows HTTPS RSS URLs only on bessnews.com and solarbytes.info (includ
 ## Verification
 
 `npm test` checks feed content extraction and topic precedence; tier rendering and story deduplication; ads in SB and BESS; safe HTML/URLs/Unicode and merge tags; and proxy destination restrictions. Browser verification should also exercise drafts, downloads, tab switching, story editing and mobile preview before publishing.
+
+## Publication logos
+
+The supplied BESSNEWS and SOLARbytes symbols appear in a white masthead above each newsletter header. The supplied clean white-background Wat(t) Bytes publisher logo appears in the same footer position in both. Original JPEG assets are retained; the checkerboard-background variant is not used.
+
+Browser exports resolve logo URLs against the current deployment origin, so the deployed app produces absolute publicly hosted asset URLs. CLI exports require `--asset-base-url https://your-deployment-domain` or `NEWSLETTER_ASSET_BASE_URL`. Export from your publicly accessible deployment before sending; localhost asset URLs cannot load in recipient inboxes. The corrected BESS feed replaces the previous `/rss` URL in saved drafts automatically.

@@ -9,6 +9,8 @@
   const settings = {
     brand: {
       name: 'SOLARbytes',
+      logoPath: '/assets/solarbytes-logo.jpeg',
+      publisherLogoPath: '/assets/watt-bytes-logo.jpeg',
       // Logo is drawn as text: <first><accent>
       logoFirst: 'SOLAR',
       logoAccent: 'bytes',

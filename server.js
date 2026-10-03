@@ -7,7 +7,7 @@ const rss = require('./api/rss');
 
 const PORT = process.env.PORT || 4400;
 const PUBLIC = path.join(__dirname, 'public');
-const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png' };
+const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpeg':'image/jpeg', '.jpg':'image/jpeg' };
 
 http
   .createServer((req, res) => {

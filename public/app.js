@@ -108,7 +108,7 @@
         $('issue').value = String(+sent.issue + 1);
       }
     }
-    if (!$('rssUrl').value) $('rssUrl').value = S.feedUrl;
+    if (!$('rssUrl').value || (S.mode === 'bess' && /^https:\/\/(www\.)?bessnews\.com\/rss\/?$/.test($('rssUrl').value.trim()))) $('rssUrl').value = S.feedUrl;
     $('todayCount').textContent = $('today').value.length;
     syncToggles();
     syncImagePreview($('spImage'), $('spImagePrev'));
