@@ -17,7 +17,7 @@
   }
   function publicationLogo(S) {
     if(!S.brand.logoPath) return '';
-    return `<tr><td align="center" bgcolor="#ffffff" style="padding:10px 20px;background-color:#ffffff"><a href="${esc(safeUrl(S.brand.siteUrl))}" target="_blank"><img src="${esc(assetUrl(S.brand.logoPath,S))}" alt="${esc(S.brand.name)} logo" width="120" height="120" style="display:block;width:120px;height:120px;border:0;margin:0 auto"></a></td></tr>`;
+    return `<a href="${esc(safeUrl(S.brand.siteUrl))}" target="_blank"><img src="${esc(assetUrl(S.brand.logoPath,S))}" alt="${esc(S.brand.name)} logo" width="64" height="64" style="display:block;width:64px;height:64px;border:0;background:#ffffff;border-radius:6px"></a>`;
   }
   function publisherLogo(S) {
     if(!S.brand.publisherLogoPath)return '';

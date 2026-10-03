@@ -64,3 +64,17 @@ test('SolarBytes and BESSNEWS own distinct header and footer identities',()=>{
   assert.ok(!sb.includes('Read the latest energy storage intelligence'));
   for(const output of [sb,bn])assert.match(output,/watt-bytes-logo.jpeg/);
 });
+
+test('publication logos sit inside compact headers rather than a separate banner row',()=>{
+  for(const settings of [solar,S]){
+    const html=C.buildNewsletter(edition(),settings).html;
+    const marker=`data-publication-header="${settings.mode || 'sb'}"`;
+    const headerStart=html.indexOf(marker);
+    const logoStart=html.indexOf(settings.brand.logoPath);
+    assert.ok(headerStart>=0 && logoStart>headerStart);
+    assert.ok(logoStart<html.lastIndexOf('Today sample'));
+    assert.equal(html.split(settings.brand.logoPath).length-1,1);
+    assert.match(U.publicationLogo(settings),/width="64" height="64"/);
+    assert.ok(!U.publicationLogo(settings).includes('<tr>'));
+  }
+});

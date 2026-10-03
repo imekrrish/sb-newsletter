@@ -84,7 +84,7 @@ The proxy allows HTTPS RSS URLs only on bessnews.com and solarbytes.info (includ
 
 ## Publication logos
 
-The supplied BESSNEWS and SolarBytes symbols appear in a white masthead above each newsletter header. The supplied clean white-background Wat(t) Bytes publisher logo appears in the same footer position in both. Original JPEG assets are retained; the checkerboard-background variant is not used.
+The supplied BESSNEWS and SolarBytes symbols appear as compact 64px badges beside the publication name inside each newsletter header, without an extra masthead row. The supplied clean white-background Wat(t) Bytes publisher logo appears in the same footer position in both. Original JPEG assets are retained; the checkerboard-background variant is not used.
 
 Browser exports resolve logo URLs against the current deployment origin, so the deployed app produces absolute publicly hosted asset URLs. CLI exports require `--asset-base-url https://your-deployment-domain` or `NEWSLETTER_ASSET_BASE_URL`. Export from your publicly accessible deployment before sending; localhost asset URLs cannot load in recipient inboxes. The corrected BESS feed replaces the previous `/rss` URL in saved drafts automatically.
 

@@ -50,9 +50,11 @@
 
     const header = `
           <tr>
-            <td bgcolor="${C.ink}" style="background-color: ${C.ink}; padding: 18px 24px; border-bottom: 3px solid ${C.accent};" class="px">
+            <td data-publication-header="sb" bgcolor="${C.ink}" style="background-color: ${C.ink}; padding: 14px 20px; border-bottom: 3px solid ${C.accent};" class="px">
               <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
+                  <td width="64" valign="middle" style="padding-right:12px">${U.publicationLogo(S)}</td>
+                  <td><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
                   <td class="stack" valign="middle" style="font-family: ${FONT};">
                     <a href="${href(B.siteUrl)}" target="_blank" style="text-decoration: none; font-size: 22px; line-height: 28px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">${esc(B.logoFirst)}<span style="color: ${C.accent};">${esc(B.logoAccent)}</span></a><div style="font-size:11px;line-height:17px;color:#fbbf24;margin-top:4px">${esc(B.tagline)}</div>${
                       d.issue
@@ -64,6 +66,7 @@
                   <td class="stack stack-gap" align="right" valign="middle" style="font-family: ${FONT}; color: #94a3b8; font-size: 12px; line-height: 18px; font-weight: 500; white-space: nowrap;">
                     ${esc(d.dateLong)}
                   </td>
+                  </tr></table></td>
                 </tr>
               </table>
             </td>
@@ -296,7 +299,7 @@
       <td align="center" class="outer-pad" style="padding: 24px 0;">
         <!--[if mso]><table role="presentation" width="600" border="0" cellpadding="0" cellspacing="0" align="center"><tr><td><![endif]-->
         <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="600" class="main-table" bgcolor="#ffffff" style="width: 600px; max-width: 600px; background-color: #ffffff; border: 1px solid ${C.line}; border-radius: 8px; border-collapse: separate; overflow: hidden; margin: 0 auto;">
-${U.publicationLogo(S)}${header}${today}${U.ad(d.ads.top,600)}${lead}${sponsored}${U.ad(d.ads.middle,600)}${sections}${metric}${U.ad(d.ads.bottom,600)}${footer}
+${header}${today}${U.ad(d.ads.top,600)}${lead}${sponsored}${U.ad(d.ads.middle,600)}${sections}${metric}${U.ad(d.ads.bottom,600)}${footer}
         </table>
         <!--[if mso]></td></tr></table><![endif]-->
       </td>
