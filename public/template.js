@@ -54,7 +54,7 @@
               <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td class="stack" valign="middle" style="font-family: ${FONT};">
-                    <a href="${href(B.siteUrl)}" target="_blank" style="text-decoration: none; font-size: 22px; line-height: 28px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">${esc(B.logoFirst)}<span style="color: ${C.accent};">${esc(B.logoAccent)}</span></a>${
+                    <a href="${href(B.siteUrl)}" target="_blank" style="text-decoration: none; font-size: 22px; line-height: 28px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">${esc(B.logoFirst)}<span style="color: ${C.accent};">${esc(B.logoAccent)}</span></a><div style="font-size:11px;line-height:17px;color:#fbbf24;margin-top:4px">${esc(B.tagline)}</div>${
                       d.issue
                         ? `
                     <span style="display: inline-block; background-color: #1e293b; color: #f8fafc; font-size: 10px; line-height: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; padding: 3px 8px; border-radius: 4px; margin-left: 10px; vertical-align: middle;">Issue #${esc(d.issue.replace(/^#/, ''))}</span>`
@@ -227,6 +227,8 @@
           <tr>
             <td class="px" bgcolor="${C.canvas}" align="center" style="background-color: ${C.canvas}; border-top: 1px solid ${C.line}; padding: 22px 24px; text-align: center; font-family: ${FONT}; font-size: 12px; line-height: 19px; color: ${C.muted};">
               ${U.publisherLogo(S)}
+              <div style="font-size:15px;font-weight:700;color:${C.ink};margin-bottom:6px">${esc(F.title)}</div>
+              <p style="margin:0 0 14px;color:${C.body}">${esc(F.description)}</p>
               <p style="margin: 0 0 14px 0; color: ${C.body};">${esc(F.feedbackQuestion)}&nbsp; ${btn(F.helpfulUrl, 'Helpful')}&nbsp; ${btn(F.notForMeUrl, 'Not for me')}</p>
               <p style="margin: 0 0 12px 0;">${F.channels
                 .map(
@@ -234,9 +236,7 @@
                     `<a href="${href(c.url)}" target="_blank" style="color: ${c.strong ? C.accentDark : '#475569'}; text-decoration: none; font-weight: ${c.strong ? 600 : 500};">${esc(c.label)}</a>`
                 )
                 .join(' &bull; ')}</p>
-              <p style="margin: 0 0 12px 0;">Published daily by <strong>${esc(B.publisher)}</strong><br>Publishers of ${B.sister
-                .map((x) => `<a href="${href(x.url)}" target="_blank" style="color: #475569; text-decoration: underline;">${esc(x.label)}</a>`)
-                .join(' &bull; ')}</p>
+              <p style="margin: 0 0 12px 0;">Published daily by <strong>${esc(B.publisher)}</strong><br><a href="${href(B.siteUrl)}" style="color:${C.accentDark};text-decoration:none">${esc(B.name)}</a></p>
               <p style="margin: 0; font-size: 11px; line-height: 17px; color: #94a3b8;">${esc(F.reason)}<br>
                 <a href="${href(F.unsubscribeUrl)}" style="color: ${C.muted}; text-decoration: underline;">Unsubscribe</a> &bull;
                 <a href="${href(F.preferencesUrl)}" style="color: ${C.muted}; text-decoration: underline;">Update Preferences</a><br>

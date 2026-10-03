@@ -3,7 +3,14 @@
   const solar = root.SBSettings || require('./settings');
   const S = JSON.parse(JSON.stringify(solar));
   S.mode = 'bess';
-  S.brand = { ...solar.brand, name:'BESSNEWS', logoPath:'/assets/bessnews-logo.jpeg', logoFirst:'BESS', logoAccent:'NEWS', title:'BESSNews Executive Briefing', siteUrl:'https://bessnews.com' };
+  S.brand = {
+    name:'BESSNEWS', logoPath:'/assets/bessnews-logo.jpeg',
+    publisherLogoPath:'/assets/watt-bytes-logo.jpeg',
+    logoFirst:'BESS', logoAccent:'NEWS', title:'BESSNEWS Executive Briefing',
+    tagline:'Everything Energy Storage • Global Intelligence',
+    siteUrl:'https://bessnews.com', publisher:'Wat(t) Bytes Media Pvt. Ltd.',
+    sister:[{label:'BESSNEWS.com',url:'https://bessnews.com'}]
+  };
   S.feedUrl = 'https://bessnews.com/api/v1/collections/nl.rss';
   S.colors = {...solar.colors, ink:'#0a192f', accent:'#10b981', accentDark:'#059669', pillBg:'#ecfdf5', pillText:'#065f46', pillLine:'#a7f3d0'};
   // Exact newsletter taxonomy from the supplied category table.
@@ -28,6 +35,13 @@
   };
   S.labels = {...solar.labels, lead:'Hero Cover Story', leadCta:'Read Full Project Analysis', storyCta:'Read Brief', metric:'Storage Pricing Index', sponsoredSub:'Partner Spotlight'};
   S.images = {...solar.images, hero:{width:1240,height:560}, feature:{width:1240,height:440}};
-  S.footer = {...solar.footer, reason:'You received this daily brief because you subscribed to BESSNEWS.', helpfulUrl:'https://bessnews.com',notForMeUrl:'https://bessnews.com',channels:[{label:'Search Archives',url:'https://bessnews.com'}]};
+  S.footer = {
+    title:'BESSNEWS Executive Briefing',
+    description:'Dedicated to utility, industrial, and commercial battery energy storage intelligence.',
+    channels:[{label:'Read the latest energy storage intelligence',url:'https://bessnews.com',strong:true}],
+    reason:'You received this executive briefing because you subscribed to BESSNEWS.',
+    unsubscribeUrl:'$[USER:UNSUB_LINK]$',
+    preferencesUrl:'$[USER:PREFERENCES_LINK]$'
+  };
   if (typeof module !== 'undefined' && module.exports) module.exports = S; else root.BESSSettings = S;
 })(typeof window !== 'undefined' ? window : globalThis);

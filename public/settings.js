@@ -1,5 +1,5 @@
 /*
- * SOLARbytes newsletter settings — brand, sections, links and image sizes.
+ * SolarBytes newsletter settings — brand, sections, links and image sizes.
  * Edit this file to change anything that is the same in every edition.
  * Loaded in the browser (window.SBSettings) and in Node (require('./settings')).
  */
@@ -8,18 +8,19 @@
 
   const settings = {
     brand: {
-      name: 'SOLARbytes',
+      name: 'SolarBytes',
       logoPath: '/assets/solarbytes-logo.jpeg',
       publisherLogoPath: '/assets/watt-bytes-logo.jpeg',
       // Logo is drawn as text: <first><accent>
-      logoFirst: 'SOLAR',
-      logoAccent: 'bytes',
-      title: 'SOLARbytes Daily Digest',
+      logoFirst: 'Solar',
+      logoAccent: 'Bytes',
+      title: 'SolarBytes Daily Digest',
+      tagline: 'Solar News – Bite Sized',
       siteUrl: 'https://solarbytes.info',
       publisher: 'Wat(t) Bytes Media Pvt. Ltd.',
       sister: [
-        { label: 'SOLARbytes.info', url: 'https://solarbytes.info' },
-        { label: 'BESSNEWS.com', url: 'https://bessnews.com' },
+        { label: 'SolarBytes.info', url: 'https://solarbytes.info' },
+        
       ],
     },
 
@@ -79,15 +80,13 @@
     },
 
     footer: {
+      title: 'SolarBytes Daily Digest',
+      description: 'Bite-sized solar news, technology updates and market developments from around the world.',
       feedbackQuestion: 'Was this edition useful?',
       helpfulUrl: 'https://solarbytes.info',
       notForMeUrl: 'https://solarbytes.info',
-      channels: [
-        { label: 'WhatsApp Alerts', url: 'https://solarbytes.info', strong: true },
-        { label: 'Telegram Channel', url: 'https://solarbytes.info', strong: true },
-        { label: 'Search Archives', url: 'https://solarbytes.info' },
-      ],
-      reason: 'You received this daily brief because you subscribed to SOLARbytes.',
+      channels: [{ label: 'Read the latest solar news', url: 'https://solarbytes.info', strong: true }],
+      reason: 'You received this daily brief because you subscribed to SolarBytes.',
       // Zoho Campaigns merge tags, replaced when the campaign is sent.
       unsubscribeUrl: '$[USER:UNSUB_LINK]$',
       preferencesUrl: '$[USER:PREFERENCES_LINK]$',

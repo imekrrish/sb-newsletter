@@ -3,9 +3,9 @@
   const bess = new URLSearchParams(location.search).get('mode') === 'bess';
   window.SBSettings = bess ? window.BESSSettings : {...solar, mode:'sb'};
   document.documentElement.dataset.mode = bess ? 'bess' : 'sb';
-  document.title = bess ? 'BESSNEWS Newsletter Studio' : 'SOLARbytes Newsletter Studio';
+  document.title = bess ? 'BESSNEWS Newsletter Studio' : 'SolarBytes Newsletter Studio';
   document.querySelector('.logo').textContent = bess ? 'BN' : 'SB';
-  document.querySelector('.brand p').textContent = bess ? 'Energy storage intelligence · Executive Briefing' : 'SOLARbytes · Daily Digest';
+  document.querySelector('.brand p').textContent = bess ? 'Energy storage intelligence · Executive Briefing' : 'SolarBytes · Daily Digest';
   document.querySelector('[data-mode="'+(bess?'bess':'sb')+'"]').classList.add('active');
   document.querySelectorAll('[data-bess]').forEach(el=>el.hidden=!bess);
   if(bess){

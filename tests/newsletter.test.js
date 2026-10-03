@@ -47,3 +47,20 @@ test('correct BESS feed and publication/header plus shared footer logos use abso
     assert.ok(html.indexOf('watt-bytes-logo.jpeg')>html.indexOf('Quick Signals') || settings.mode!=='bess');
   }
 });
+test('SolarBytes and BESSNEWS own distinct header and footer identities',()=>{
+  assert.equal(solar.brand.name,'SolarBytes');
+  assert.equal(solar.brand.logoFirst+solar.brand.logoAccent,'SolarBytes');
+  assert.notDeepEqual(solar.footer,S.footer);
+  const sb=C.buildNewsletter(edition(),solar).html;
+  const bn=C.buildNewsletter(edition(),S).html;
+  assert.match(sb,/Solar<span[^>]*>Bytes/);
+  assert.match(sb,/Solar News/);
+  assert.match(sb,/Bite-sized solar news/);
+  assert.ok(!sb.includes('Dedicated to utility, industrial'));
+  assert.match(bn,/Everything Energy Storage/);
+  assert.match(bn,/Dedicated to utility, industrial/);
+  assert.ok(!bn.includes('Bite-sized solar news'));
+  assert.ok(!bn.includes('Read the latest solar news'));
+  assert.ok(!sb.includes('Read the latest energy storage intelligence'));
+  for(const output of [sb,bn])assert.match(output,/watt-bytes-logo.jpeg/);
+});

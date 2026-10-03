@@ -1,4 +1,4 @@
-# Newsletter Studio — SOLARbytes & BESSNEWS
+# Newsletter Studio — SolarBytes & BESSNEWS
 
 An extension of `imekrrish/sb-newsletter`, using its existing zero-dependency editor and converter patterns, with a separate BESSNEWS tab. BESSNEWS follows `references/BN_NL_9.html` and the supplied three-tier editorial requirements. TaiyangNews remains in its separate repository and is not included in this app.
 
@@ -16,7 +16,7 @@ No dependency install is required. Use the publication tabs:
 
 | URL | Newsletter |
 | --- | --- |
-| `/` or `/?mode=sb` | SOLARbytes Daily Digest |
+| `/` or `/?mode=sb` | SolarBytes Daily Digest |
 | `/?mode=bess` | BESSNEWS Executive Briefing |
 
 ## BESS workflow
@@ -30,7 +30,7 @@ No dependency install is required. Use the publication tabs:
 7. Configure optional top, middle, and footer banner advertisements and the native partner spotlight. All placements are labelled. Ads require an HTTPS/HTTP image and destination; disabled or incomplete banners are omitted from export.
 8. Inspect desktop and mobile previews, then Download or Copy HTML for the email platform.
 
-Hero and secondary stories are removed from the signal list to avoid duplication. Each secondary slot can contain only one distinct story. BESSNEWS and SOLARbytes have independent saved drafts, selections, overrides and last-exported issue numbers. Parsed feed content is saved with the draft so file-upload editions can be recovered. Drafts are local to the browser; there is no account or cross-device synchronization.
+Hero and secondary stories are removed from the signal list to avoid duplication. Each secondary slot can contain only one distinct story. BESSNEWS and SolarBytes have independent saved drafts, selections, overrides and last-exported issue numbers. Parsed feed content is saved with the draft so file-upload editions can be recovered. Drafts are local to the browser; there is no account or cross-device synchronization.
 
 The UI flags missing hero paragraphs/highlights, secondary feature copy, and incomplete ads. It permits draft exports so editors can work on partial editions. Review those flags before sending. No email is sent by this app.
 
@@ -49,9 +49,9 @@ Edit `public/bess-settings.js`. The supplied category table is implemented exact
 
 Parent categories determine the newsletter group; child categories appear as article tag pills. Parent/header names and NL are omitted from pills. Parent grouping takes precedence over a child tag from another group. Existing heading aliases migrate saved drafts; unknown stories fall back to REGIONAL INTELLIGENCE.
 
-## SOLARbytes
+## SolarBytes
 
-SOLARbytes keeps its existing lead/story/metric layout and gains the same three banner slots. Existing SOLARbytes draft keys are retained.
+SolarBytes keeps its existing lead/story/metric layout and gains the same three banner slots. Existing SolarBytes draft keys are retained.
 
 ## CLI
 
@@ -61,7 +61,7 @@ node cli.js feed.rss out.html --mode bess --asset-base-url https://your-deployme
 node cli.js feed.rss out.html --mode sb --asset-base-url https://your-deployment-domain
 ```
 
-The CLI defaults to SOLARbytes; `--mode bess` creates a hero and the next two features. `edition.bess.example.json` illustrates explicit feature overrides, hero paragraphs, sponsored copy and ads. Arrays of bullet strings are supported. Sample files contain clearly marked illustrative copy, not verified current news. Replace every sample sponsor image, link and fact before publication.
+The CLI defaults to SolarBytes; `--mode bess` creates a hero and the next two features. `edition.bess.example.json` illustrates explicit feature overrides, hero paragraphs, sponsored copy and ads. Arrays of bullet strings are supported. Sample files contain clearly marked illustrative copy, not verified current news. Replace every sample sponsor image, link and fact before publication.
 
 ## Vercel
 
@@ -84,6 +84,8 @@ The proxy allows HTTPS RSS URLs only on bessnews.com and solarbytes.info (includ
 
 ## Publication logos
 
-The supplied BESSNEWS and SOLARbytes symbols appear in a white masthead above each newsletter header. The supplied clean white-background Wat(t) Bytes publisher logo appears in the same footer position in both. Original JPEG assets are retained; the checkerboard-background variant is not used.
+The supplied BESSNEWS and SolarBytes symbols appear in a white masthead above each newsletter header. The supplied clean white-background Wat(t) Bytes publisher logo appears in the same footer position in both. Original JPEG assets are retained; the checkerboard-background variant is not used.
 
 Browser exports resolve logo URLs against the current deployment origin, so the deployed app produces absolute publicly hosted asset URLs. CLI exports require `--asset-base-url https://your-deployment-domain` or `NEWSLETTER_ASSET_BASE_URL`. Export from your publicly accessible deployment before sending; localhost asset URLs cannot load in recipient inboxes. The corrected BESS feed replaces the previous `/rss` URL in saved drafts automatically.
+
+SolarBytes and BESSNEWS own independent brand and footer configurations. SolarBytes uses its solar-news tagline, Daily Digest description and solarbytes.info link. BESSNEWS uses its energy-storage tagline, Executive Briefing description and bessnews.com link. The Wat(t) Bytes publisher mark occupies the same footer position in both publications.
