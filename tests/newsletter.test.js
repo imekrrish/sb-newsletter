@@ -15,13 +15,27 @@ test('duplicate features and lead cannot also render as signals',()=>{const e=ed
 test('ad slots appear in both publications, disabled and incomplete slots disappear',()=>{for(const settings of [S,solar]){const e=edition();e.ads={top:{enabled:true,image:'https://example.com/ad.jpg',url:'https://example.com',label:'Test sponsor'},middle:{enabled:false,image:'https://example.com/hidden.jpg',url:'https://example.com'},bottom:{enabled:true,image:'javascript:bad',url:'https://example.com'}};const {html}=C.buildNewsletter(e,settings);assert.match(html,/Test sponsor/);assert.ok(!html.includes('hidden.jpg'));assert.ok(!html.includes('javascript:bad'));assert.equal((html.match(/Advertisement/g)||[]).length,1);}});
 test('URLs, HTML, and Unicode survive safely',()=>{const e=edition();e.lead.story={...items[0],title:'<script>alert(1)</script> – ₹',link:'javascript:alert(1)',image:'data:text/html,bad'};const {html}=C.buildNewsletter(e,S);assert.ok(!html.includes('<script>'));assert.ok(!html.includes('javascript:'));assert.ok(!html.includes('data:text/html'));assert.match(html,/&#8377;/);assert.equal(U.safeUrl('https://example.com'),'https://example.com/');});
 test('proxy rejects arbitrary hosts and private destinations',()=>{const {allowed}=require('../api/rss');for(const u of ['http://bessnews.com/rss','https://localhost/rss','https://127.0.0.1/rss','https://bessnews.com.evil.com/rss','https://user:pass@bessnews.com/rss','https://bessnews.com:444/rss'])assert.equal(allowed(u),false);assert.equal(allowed('https://bessnews.com/rss'),true);});
-test('local server serves SB/BESS tabs and rejects unsupported proxy destinations',async t=>{
+test('Railway server uses assigned port, serves both tabs, passes healthcheck and shuts down cleanly',async t=>{
   const {spawn}=require('node:child_process');
-  const port=45219;const server=spawn(process.execPath,['server.js'],{cwd:require('node:path').resolve(__dirname,'..'),env:{...process.env,PORT:String(port)}});
+  const config=JSON.parse(fs.readFileSync(__dirname+'/../railway.json','utf8'));
+  const [runtime,...startArgs]=config.deploy.startCommand.split(' ');
+  assert.equal(runtime,'node');
+  const server=spawn(process.execPath,startArgs,{cwd:require('node:path').resolve(__dirname,'..'),env:{...process.env,PORT:'0'}});
   t.after(()=>server.kill());
-  await new Promise((resolve,reject)=>{server.stdout.once('data',resolve);server.once('error',reject);server.once('exit',code=>reject(new Error('Server exited '+code)));});
+  const ready=await new Promise((resolve,reject)=>{server.stdout.once('data',data=>resolve(String(data)));server.once('error',reject);server.once('exit',code=>reject(new Error('Server exited '+code)));});
+  const port=Number(/0\.0\.0\.0:(\d+)/.exec(ready)[1]);
+  const health=await fetch(`http://localhost:${port}${config.deploy.healthcheckPath}`);
+  assert.equal(health.status,200);
+  assert.deepEqual(await health.json(),{status:'ok'});
+  assert.equal(health.headers.get('cache-control'),'no-store');
+  const head=await fetch(`http://localhost:${port}${config.deploy.healthcheckPath}`,{method:'HEAD'});
+  assert.equal(head.status,200);assert.equal(await head.text(),'');
   for(const path of ['/','/?mode=sb','/bess-settings.js','/assets/bessnews-logo.jpeg','/assets/solarbytes-logo.jpeg','/assets/watt-bytes-logo.jpeg']){const r=await fetch(`http://localhost:${port}${path}`);assert.equal(r.status,200,path);assert.ok((await r.text()).length>100);}
   const r=await fetch(`http://localhost:${port}/api/rss?url=https://127.0.0.1/rss`);assert.equal(r.status,400);
+  await r.text();
+  const closed=new Promise(resolve=>server.once('exit',(code,signal)=>resolve({code,signal})));
+  server.kill('SIGTERM');
+  assert.deepEqual(await closed,{code:0,signal:null});
 });
 
 test('exact BESS parent headers and all child tag pills follow supplied taxonomy',()=>{

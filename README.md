@@ -63,6 +63,25 @@ node cli.js feed.rss out.html --mode sb --asset-base-url https://your-deployment
 
 The CLI defaults to SolarBytes; `--mode bess` creates a hero and the next two features. `edition.bess.example.json` illustrates explicit feature overrides, hero paragraphs, sponsored copy and ads. Arrays of bullet strings are supported. Sample files contain clearly marked illustrative copy, not verified current news. Replace every sample sponsor image, link and fact before publication.
 
+## Railway — deploy directly from GitHub
+
+Create a Railway project with **Deploy from GitHub repo**, select `imekrrish/sb-newsletter`, and keep the root directory as `/` and branch as `main`. Railway reads `railway.json`: Railpack installs Node 22 and npm dependencies from the lockfile, builds the app, and starts `node server.js`. The server binds to `0.0.0.0` using Railway's injected `PORT`; `/health` must pass before traffic switches to the new deployment. Failed processes restart automatically, and SIGTERM drains active requests.
+
+Under **Settings → Networking → Public Networking**, click **Generate Domain** once to expose the app. Open that HTTPS URL for SolarBytes, or add `/?mode=bess` for BESSNEWS. Keep GitHub automatic deployments enabled so future pushes redeploy the connected service.
+
+No manually configured environment variables, database, Redis, migrations, volume, or seed command are required. All runtime code and logo assets are included in GitHub. Both the editor and RSS proxy run in this single service. Drafts remain in browser storage. Exported logo URLs automatically use the Railway domain; CLI exports still need `--asset-base-url`.
+
+The repository configures the application service; Railway account/project creation and its public domain are one-time Railway actions. It does not provision unrelated external services.
+
+To reproduce a clean deployment locally:
+
+```sh
+npm ci
+npm run build
+PORT=8080 npm start
+# http://localhost:8080/health
+```
+
 ## Vercel
 
 Import this repository; Framework: Other, build command: `npm run build`, output: `public`. `vercel.json` includes the `/api/rss` serverless function. No secrets or environment variables are required. A Vercel deployment is a separate operation; this project is not deployed automatically by the build.
